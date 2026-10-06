@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UNTIL Footer Concepts</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- UNTIL's own fonts: DIN 2014 (Adobe Fonts kit used on until.co.uk) + Tungsten Semibold (UNTIL's Webflow asset) -->
+<link rel="preconnect" href="https://use.typekit.net" crossorigin>
+<link rel="stylesheet" href="https://use.typekit.net/ytt6sfw.css">
+<style>
+  @font-face { font-family: "Tungsten"; src: url("https://cdn.prod.website-files.com/6463557675a28f1b150ff1b2/6463585c888b02605c49e073_Tungsten-Semibold.woff2") format("woff2"); font-weight: 600; font-display: swap; }
+
+  :root {
+    --page: #FCFCFD;
+    --white: #FFFFFF;
+    --ink: #020417;
+    --text: #364152;
+    --mute: #697586;
+    --line: #E3E8EF;
+    --accent: #1526D0;
+    --accent-dark: #111EA2;
+    --accent-light: #8C97FF;
+    --pill: #5D6AEE;
+    --display: "Tungsten", "Barlow Condensed", "Arial Narrow", sans-serif;
+    --body: "din-2014", "DIN Alternate", "DIN 2014", "Barlow", Arial, sans-serif;
+    --ease: cubic-bezier(.2, .7, .3, 1);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--text); font-family: var(--body); font-weight: 400; font-size: 1rem; line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+  img, svg { display: block; }
+  a { color: inherit; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  h2, h3, p { margin: 0; }
+  [hidden] { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* Client-First utilities (same names as on the Webflow site) */
+  .padding-global { padding-left: 2.5rem; padding-right: 2.5rem; }
+  .container-large { width: 100%; max-width: 88rem; margin-left: auto; margin-right: auto; }
+
+  /* Shared footer pieces */
+  .footer_wordmark { width: 100%; height: auto; aspect-ratio: 1384 / 303; fill: currentColor; }
+  /* Overlay on the big wordmark: letters at half the visibility of the first 100% to 15% ramp, then 30% stronger, rotated 180deg: 100% at the bottom to 70% at the top (white on C, ink on A) */
+  .footer_wordmark-wrap { position: relative; display: block; }
+  .footer_wordmark-overlay { position: absolute; inset: 0; pointer-events: none; }
+  .footer_wordmark-overlay.is-white { background: linear-gradient(0deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, .7) 100%); }
+  .footer_wordmark-overlay.is-ink { background: linear-gradient(0deg, rgba(2, 4, 23, 1) 0%, rgba(2, 4, 23, .7) 100%); }
+  .footer_marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .footer_marquee-track { display: flex; width: max-content; animation: footer-marquee var(--speed, 60s) linear infinite; }
+  .footer_marquee:hover .footer_marquee-track, .footer_marquee:focus-within .footer_marquee-track { animation-play-state: paused; }
+  .footer_marquee-list { display: flex; align-items: center; gap: var(--gap, .5rem); padding-right: var(--gap, .5rem); }
+  @keyframes footer-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .footer_icon { display: inline-block; flex: none; vertical-align: middle; }
+  .footer_arrow { width: 1.125rem; height: 1.125rem; transition: transform .25s var(--ease); }
+  a:hover > .footer_arrow { transform: translateX(3px); }
+  .footer-ink_component a:focus-visible, .footer-type_component a:focus-visible, .footer-type_component button:focus-visible { outline: 2px solid var(--accent-light); outline-offset: 3px; border-radius: 4px; }
+  .footer-type_component a:focus-visible, .footer-type_component button:focus-visible { outline-color: var(--accent); }
+
+  /* ---------------- Presentation chrome (not part of the footers) ---------------- */
+  .present_bar { position: sticky; top: 0; z-index: 20; background: rgba(252, 252, 253, .9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  .present_bar-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; height: 4rem; }
+  .present_brand { display: flex; align-items: center; gap: .875rem; color: var(--ink); text-decoration: none; min-width: 0; }
+  .present_logo { width: 5.5rem; height: auto; fill: var(--ink); flex: none; }
+  .present_title { font-size: .875rem; color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .present_toggle { display: inline-flex; padding: .25rem; border-radius: 999px; background: #EEF0F4; flex: none; }
+  .present_toggle-button { appearance: none; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: .875rem; font-weight: 600; height: 2.25rem; padding: 0 1rem; border-radius: 999px; cursor: pointer; white-space: nowrap; transition: background-color .2s var(--ease), color .2s var(--ease); }
+  .present_toggle-button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+  .present_toggle-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .present_intro { padding-top: 4rem; padding-bottom: 3rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: end; }
+  .present_label { font-family: var(--display); font-weight: 600; font-size: clamp(2.75rem, 6vw, 5rem); line-height: .9; text-transform: uppercase; color: var(--ink); }
+  .present_label small { display: block; font-family: var(--body); font-weight: 600; font-size: .8125rem; letter-spacing: .14em; color: var(--accent); margin-bottom: .75rem; }
+  .present_note { color: var(--text); max-width: 34rem; justify-self: end; }
+  .present_page { height: 14rem; margin-bottom: 0; border-radius: 16px 16px 0 0; background: repeating-linear-gradient(135deg, #F1F3F7 0 12px, #F7F8FA 12px 24px); display: grid; place-items: center; color: var(--mute); font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .present_page-wrap { padding-bottom: 0; }
+
+  /* =====================================================================
+     A · INK  (footer-ink_)
+     ===================================================================== */
+  .footer-ink_component { padding: .75rem; }
+  .footer-ink_card { position: relative; overflow: hidden; border-radius: 28px; background: var(--ink); color: #fff; }
+  .footer-ink_inner { max-width: 88rem; margin: 0 auto; padding-left: 3.5rem; padding-right: 3.5rem; }
+  .footer-ink_top { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: end; gap: 2.5rem; padding-top: 5rem; padding-bottom: 3.5rem; }
+  .footer-ink_eyebrow { color: var(--accent-light); font-size: .8125rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 1.25rem; }
+  .footer-ink_heading { font-family: var(--display); font-weight: 600; font-size: clamp(3.5rem, 7.2vw, 7rem); line-height: .92; text-transform: uppercase; text-wrap: balance; }
+  .footer-ink_actions { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; justify-self: end; }
+  .footer-ink_text { color: rgba(255, 255, 255, .7); font-size: 1.125rem; max-width: 24rem; }
+  .footer-ink_buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .footer-ink_button { display: inline-flex; align-items: center; gap: .5rem; height: 3rem; padding: 0 1.375rem; border-radius: 999px; background: #fff; color: var(--ink); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color .2s var(--ease), color .2s var(--ease); }
+  .footer-ink_button:hover { background: var(--accent); color: #fff; }
+  .footer-ink_button.is-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3); }
+  .footer-ink_button.is-ghost:hover { background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px #fff; }
+  .footer-ink_email { color: #fff; font-weight: 600; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, .25); padding-bottom: 2px; transition: border-color .2s var(--ease); }
+  .footer-ink_email:hover { border-color: #fff; }
+  .footer-ink_marquee { --speed: 70s; border-top: 1px solid rgba(255, 255, 255, .1); border-bottom: 1px solid rgba(255, 255, 255, .1); padding: 1.125rem 0; }
+  .footer-ink_pill { display: inline-flex; align-items: center; height: 2.25rem; padding: 0 1.125rem; border-radius: 999px; background: rgba(255, 255, 255, .06); color: #fff; font-size: .9375rem; font-weight: 600; text-decoration: none; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12); transition: background-color .2s var(--ease), box-shadow .2s var(--ease); }
+  .footer-ink_pill:hover { background: var(--pill); box-shadow: inset 0 0 0 1px var(--pill); }
+  .footer-ink_grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2.5rem 2rem; padding-top: 4rem; padding-bottom: 3.5rem; }
+  .footer-ink_heading-small { color: var(--accent-light); font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 1.25rem; }
+  .footer-ink_list { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; }
+  .footer-ink_link { color: rgba(255, 255, 255, .74); text-decoration: none; line-height: 1.35; transition: color .2s var(--ease); }
+  .footer-ink_link:hover { color: #fff; }
+  .footer-ink_address { display: block; color: rgba(255, 255, 255, .45); font-size: .8125rem; margin-top: .125rem; }
+  .footer-ink_link.is-all { color: #fff; font-weight: 600; }
+  .footer-ink_bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 1.5rem 0; border-top: 1px solid rgba(255, 255, 255, .1); font-size: .875rem; color: rgba(255, 255, 255, .5); }
+  .footer-ink_legal { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; }
+  .footer-ink_legal-link { color: rgba(255, 255, 255, .74); text-decoration: none; }
+  .footer-ink_legal-link:hover { color: #fff; }
+  .footer-ink_social { display: flex; gap: .5rem; }
+  .footer-ink_social-link { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18); transition: background-color .2s var(--ease); }
+  .footer-ink_social-link:hover { background: rgba(255, 255, 255, .1); }
+  .footer-ink_brand { display: block; padding-top: 1rem; padding-bottom: 3.5rem; color: #fff; }
+
+  @media (max-width: 991px) {
+    .padding-global { padding-left: 1.5rem; padding-right: 1.5rem; }
+    .footer-ink_inner { padding-left: 2rem; padding-right: 2rem; }
+    .footer-ink_top { grid-template-columns: 1fr; align-items: start; padding-top: 4rem; }
+    .footer-ink_actions { justify-self: start; }
+    .footer-ink_grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .present_intro { grid-template-columns: 1fr; }
+    .present_note { justify-self: start; }
+  }
+  @media (max-width: 767px) {
+    .padding-global { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .footer-ink_component { padding: .5rem; }
+    .footer-ink_card { border-radius: 20px; }
+    .footer-ink_inner { padding-left: 1.25rem; padding-right: 1.25rem; }
+    .footer-ink_top { padding-top: 3rem; padding-bottom: 2.5rem; }
+    .footer-ink_text { font-size: 1rem; }
+    .footer-ink_grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 1.25rem; padding-top: 3rem; }
+    .footer-ink_pill { height: 2rem; font-size: .875rem; padding: 0 .875rem; }
+    .footer-ink_bottom { flex-direction: column-reverse; align-items: flex-start; }
+    .footer-ink_brand { padding-bottom: 1.5rem; }
+    .present_title { display: none; }
+    .present_intro { padding-top: 2.5rem; padding-bottom: 2rem; }
+    .present_page { height: 8rem; }
+  }
+  @media (max-width: 479px) {
+    .footer-ink_grid .is-locations { grid-column: 1 / -1; }
+    .footer-ink_grid .is-locations .footer-ink_list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .875rem 1.25rem; }
+    .footer-ink_grid .is-locations .is-all-item { grid-column: 1 / -1; }
+    .footer-ink_button { width: 100%; justify-content: center; }
+    .footer-ink_buttons { width: 100%; }
+    .footer-ink_legal { flex-direction: column; align-items: flex-start; }
+    .present_logo { width: 4.5rem; }
+    .present_toggle-button { padding: 0 .75rem; }
+  }
+
+  /* =====================================================================
+     C · BIG TYPE  (footer-type_)
+     ===================================================================== */
+  .footer-type_component { background: var(--white); border-top: 1px solid var(--line); }
+  .footer-type_ticker { --speed: 80s; --gap: 2.75rem; padding: 3rem 0 2.75rem; border-bottom: 1px solid var(--line); }
+  .footer-type_word { display: block; padding: .08em 0 0; font-family: var(--display); font-weight: 600; font-size: clamp(3.5rem, 9vw, 8.5rem); line-height: 1; text-transform: uppercase; text-decoration: none; white-space: nowrap; color: var(--ink); transition: color .25s var(--ease), -webkit-text-stroke-color .25s var(--ease); }
+  .footer-type_word.is-outline { color: transparent; -webkit-text-stroke: 1.5px var(--ink); }
+  .footer-type_word:hover { color: var(--accent); -webkit-text-stroke-color: var(--accent); }
+  .footer-type_item { display: flex; align-items: center; gap: var(--gap); }
+  .footer-type_dot { width: .875rem; height: .875rem; border-radius: 999px; background: var(--pill); flex: none; }
+  .footer-type_main { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr); gap: 3rem; padding-top: 4.5rem; padding-bottom: 4rem; }
+  .footer-type_contact { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .footer-type_eyebrow { color: var(--accent); font-size: .75rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .footer-type_mail { font-family: var(--display); font-weight: 600; font-size: clamp(2.25rem, 3.5vw, 3.5rem); line-height: 1; color: var(--ink); text-decoration: none; text-transform: uppercase; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 3px no-repeat; padding: .08em 0 .2em; transition: background-size .35s var(--ease), color .25s var(--ease); overflow-wrap: anywhere; }
+  .footer-type_mail:hover { background-size: 100% 3px; color: var(--accent); }
+  .footer-type_buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .footer-type_button { display: inline-flex; align-items: center; gap: .5rem; height: 3rem; padding: 0 1.375rem; border-radius: 6px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color .2s var(--ease), box-shadow .2s var(--ease); }
+  .footer-type_button:hover { background: var(--accent-dark); }
+  .footer-type_button.is-ghost { background: var(--white); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line); }
+  .footer-type_button.is-ghost:hover { box-shadow: inset 0 0 0 1px var(--ink); }
+  .footer-type_cols { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5rem 2rem; }
+  .footer-type_heading-small { color: var(--mute); font-size: .875rem; font-weight: 600; margin-bottom: 1rem; }
+  .footer-type_list { display: flex; flex-direction: column; align-items: flex-start; gap: .625rem; }
+  .footer-type_link { color: var(--ink); text-decoration: none; line-height: 1.35; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .3s var(--ease), color .2s var(--ease); }
+  .footer-type_link:hover { background-size: 100% 1px; color: var(--accent); }
+  .footer-type_locations { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .footer-type_location { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; padding: 1.75rem 1.5rem 1.75rem 0; color: var(--ink); text-decoration: none; border-right: 1px solid var(--line); transition: color .2s var(--ease); }
+  .footer-type_location + .footer-type_location { padding-left: 1.5rem; }
+  .footer-type_location:last-child { border-right: 0; }
+  .footer-type_location:hover { color: var(--accent); }
+  .footer-type_location-name { display: block; font-family: var(--display); font-weight: 600; font-size: 2.25rem; line-height: 1; text-transform: uppercase; padding-top: .06em; }
+  .footer-type_location-address { display: block; color: var(--mute); font-size: .875rem; margin-top: .5rem; }
+  .footer-type_location-arrow { width: 1.5rem; height: 1.5rem; transition: transform .25s var(--ease); }
+  .footer-type_top-icon { width: 1rem; height: 1rem; }
+  .footer-type_location:hover .footer-type_location-arrow { transform: translate(3px, -3px); }
+  .footer-type_bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 2rem; padding: 1.5rem 0; border-top: 1px solid var(--line); font-size: .875rem; color: var(--mute); }
+  .footer-type_legal { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; }
+  .footer-type_legal-link { color: var(--ink); text-decoration: none; }
+  .footer-type_legal-link:hover { color: var(--accent); }
+  .footer-type_right { display: flex; align-items: center; gap: 1.25rem; }
+  .footer-type_social { display: flex; gap: .5rem; }
+  .footer-type_social-link { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 999px; color: var(--ink); transition: color .2s var(--ease), background-color .2s var(--ease); }
+  .footer-type_social-link:hover { color: var(--accent); background: rgba(21, 38, 208, .06); }
+  .footer-type_top { display: inline-flex; align-items: center; gap: .5rem; height: 2.75rem; padding: 0 1.125rem; border-radius: 999px; background: var(--ink); color: #fff; border: 0; font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background-color .2s var(--ease); }
+  .footer-type_top:hover { background: var(--accent); }
+  .footer-type_brand { display: block; padding-top: 1.5rem; padding-bottom: 3rem; color: var(--ink); text-decoration: none; }
+  .footer-type_never { display: flex; justify-content: space-between; font-family: var(--display); font-weight: 600; font-size: 1.125rem; line-height: 1; letter-spacing: .3em; text-transform: uppercase; color: var(--mute); margin-bottom: 1rem; }
+
+  @media (max-width: 991px) {
+    .footer-type_main { grid-template-columns: 1fr; padding-top: 3.5rem; }
+    .footer-type_cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .footer-type_locations { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .footer-type_location:nth-child(2) { border-right: 0; }
+    .footer-type_location:nth-child(3) { padding-left: 0; }
+    .footer-type_location:nth-child(n+3) { border-top: 1px solid var(--line); }
+  }
+  @media (max-width: 767px) {
+    .footer-type_ticker { --gap: 1.5rem; padding: 2rem 0 1.75rem; }
+    .footer-type_dot { width: .625rem; height: .625rem; }
+    .footer-type_location-name { font-size: 1.75rem; }
+    .footer-type_bottom { flex-direction: column-reverse; align-items: flex-start; }
+    .footer-type_brand { padding-bottom: 1.5rem; }
+  }
+  @media (max-width: 479px) {
+    .footer-type_locations { grid-template-columns: 1fr; }
+    .footer-type_location, .footer-type_location + .footer-type_location { padding: 1.25rem 0; border-right: 0; }
+    .footer-type_location:nth-child(n+2) { border-top: 1px solid var(--line); }
+    .footer-type_button { width: 100%; justify-content: center; }
+    .footer-type_buttons { width: 100%; }
+    .footer-type_legal { flex-direction: column; align-items: flex-start; }
+    .footer-type_never { font-size: .875rem; letter-spacing: .2em; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer_marquee-track { animation: none; }
+    .footer_marquee { overflow-x: auto; }
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- UNTIL wordmark (UNTIL letters from the live Never-stop.svg) + social icons as recolourable symbols -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="until-wordmark" viewBox="0 92 1384 303">
+    <path d="M583.711 92.3516V388.439H538.37L408.758 207.393V388.439H349.155V92.3516H394.531L524.143 272.964V92.3516H583.711Z"/>
+    <path d="M1079.06 92.3516V388.439H1019.46V92.3516H1079.06Z"/>
+    <path d="M1384 332.589H1259.92V92.3516H1200.31V388.439H1369.7L1384 332.589Z"/>
+    <path d="M916.048 92.3516H690.567V148.202H771.766V388.439H831.403V148.202H901.753L916.048 92.3516Z"/>
+    <path d="M138.618 336.63C154.79 336.63 167.516 324.171 167.516 308.338V92.3516H227.084V309.507C227.084 356.472 188.361 394.352 140.427 394.352H86.6919C38.7231 394.352 0 356.439 0 309.507V92.3516H59.0911V308.338C59.0911 324.171 71.8168 336.63 87.9884 336.63H138.618Z"/>
+  </symbol>
+  <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="icon-linkedin" viewBox="0 0 24 24"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.75h4v11H3v-11Zm7 0h3.8v1.5h.06c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.77 2.65 4.77 6.1v5.45h-4v-4.83c0-1.15-.02-2.63-1.6-2.63-1.6 0-1.85 1.25-1.85 2.55v4.91h-3.95v-11Z"/></symbol>
+  <symbol id="icon-facebook" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 21v-7.5h2.53l.38-2.94H13.5V8.69c0-.85.24-1.43 1.46-1.43h1.56V4.63A20.9 20.9 0 0 0 14.25 4.5c-2.25 0-3.79 1.37-3.79 3.9v2.16H7.9v2.94h2.56V21h3.04Z"/></symbol>
+  <!-- Lucide icons (lucide.dev, ISC licence) -->
+  <symbol id="lucide-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="lucide-arrow-up-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+  <symbol id="lucide-arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+</svg>
+
+<!-- Presentation bar -->
+<div class="present_bar">
+  <div class="padding-global"><div class="container-large present_bar-inner">
+    <span class="present_brand"><svg class="present_logo" viewBox="0 0 1384 303" aria-hidden="true"><use href="#until-wordmark"/></svg><span class="present_title">Footer concepts</span></span>
+    <div class="present_toggle" role="group" aria-label="Footer concept">
+      <button class="present_toggle-button" type="button" data-show="ink" aria-pressed="true">A · Ink</button>
+      <button class="present_toggle-button" type="button" data-show="type" aria-pressed="false">C · Big type</button>
+    </div>
+  </div></div>
+</div>
+
+<div class="padding-global"><div class="container-large">
+  <div class="present_intro" data-concept="ink">
+    <h1 class="present_label"><small>Concept A</small>Ink</h1>
+    <p class="present_note">A dark, rounded panel that closes every page with one strong call to action. Practitioner pills scroll across the middle and turn UNTIL blue on hover, and the full UNTIL wordmark signs off at the bottom.</p>
+  </div>
+  <div class="present_intro" data-concept="type" hidden>
+    <h1 class="present_label"><small>Concept C</small>Big type</h1>
+    <p class="present_note">Light and editorial. The practitioner marquee becomes the headline in giant Tungsten, alternating solid and outline, with every word a link. Contact leads, links stay compact, locations sit in one ruled row.</p>
+  </div>
+  <div class="present_page">End of page</div>
+</div></div>
+
+<!-- =================================================================== A · INK -->
+<footer class="footer-ink_component" data-concept="ink">
+  <div class="footer-ink_card">
+    <div class="footer-ink_inner">
+      <div class="footer-ink_top">
+        <div>
+          <p class="footer-ink_eyebrow">Never stop</p>
+          <h2 class="footer-ink_heading">Find your space at UNTIL</h2>
+        </div>
+        <div class="footer-ink_actions">
+          <p class="footer-ink_text">Train, treat, coach and consult from four London clubs.</p>
+          <div class="footer-ink_buttons">
+            <a class="footer-ink_button" href="https://www.until.co.uk/apply-now">Apply now <svg class="footer_arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-right"/></svg></a>
+            <a class="footer-ink_button is-ghost" href="https://www.until.co.uk/memberships">Compare memberships</a>
+          </div>
+          <a class="footer-ink_email" href="mailto:memberships@until.co.uk">memberships@until.co.uk</a>
+        </div>
+      </div>
+    </div>
+
+    <nav class="footer-ink_marquee footer_marquee" aria-label="Rooms by practitioner">
+      <div class="footer_marquee-track">
+        <ul class="footer_marquee-list">
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/gym-space-to-rent">Personal Trainers</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/pilates-room-to-rent">Pilates Instructors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/physiotherapy-room-to-rent">Physios</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/osteopathy-room-to-rent">Osteopaths</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/chiropractic-room-to-rent">Chiropractors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/massage-therapists">Massage Therapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/acupuncturists">Acupuncturists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/podiatrists">Podiatrists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/therapists">Therapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/counselling">Counsellors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/psychotherapy-room-to-rent">Psychotherapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/nutritionist-room-to-rent">Nutritionists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/business-coaches">Coaches</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/medical-room-to-rent">Doctors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/medical-aesthetics">Aesthetics Practitioners</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/dental-surgery-to-rent">Dentists</a></li>
+        </ul>
+        <ul class="footer_marquee-list" aria-hidden="true">
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/gym-space-to-rent" tabindex="-1">Personal Trainers</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/pilates-room-to-rent" tabindex="-1">Pilates Instructors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/physiotherapy-room-to-rent" tabindex="-1">Physios</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/osteopathy-room-to-rent" tabindex="-1">Osteopaths</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/chiropractic-room-to-rent" tabindex="-1">Chiropractors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/massage-therapists" tabindex="-1">Massage Therapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/acupuncturists" tabindex="-1">Acupuncturists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/podiatrists" tabindex="-1">Podiatrists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/therapists" tabindex="-1">Therapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/counselling" tabindex="-1">Counsellors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/psychotherapy-room-to-rent" tabindex="-1">Psychotherapists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/nutritionist-room-to-rent" tabindex="-1">Nutritionists</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/business-coaches" tabindex="-1">Coaches</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/medical-room-to-rent" tabindex="-1">Doctors</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/medical-aesthetics" tabindex="-1">Aesthetics Practitioners</a></li>
+          <li><a class="footer-ink_pill" href="https://www.until.co.uk/dental-surgery-to-rent" tabindex="-1">Dentists</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="footer-ink_inner">
+      <div class="footer-ink_grid">
+        <nav aria-labelledby="ink-spaces">
+          <h3 class="footer-ink_heading-small" id="ink-spaces">Find your space</h3>
+          <ul class="footer-ink_list">
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/industries/train">Gym floor &amp; Pilates</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/industries/treat">Treatment rooms</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/industries/coach">Therapy &amp; coaching rooms</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/industries/consult/medical">Clinic &amp; aesthetics rooms</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/industries/consult/dental">Dental surgeries</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="ink-memberships">
+          <h3 class="footer-ink_heading-small" id="ink-memberships">Memberships</h3>
+          <ul class="footer-ink_list">
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/memberships/thrive">Thrive</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/memberships/teams">Teams</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/memberships">Compare memberships</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/members">Why UNTIL</a></li>
+          </ul>
+        </nav>
+        <nav class="is-locations" aria-labelledby="ink-locations">
+          <h3 class="footer-ink_heading-small" id="ink-locations">Locations</h3>
+          <ul class="footer-ink_list">
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/locations/soho">Soho<span class="footer-ink_address">111 Charing Cross Rd</span></a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/locations/liverpool-st">Liverpool St<span class="footer-ink_address">280 Bishopsgate</span></a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/locations/marylebone">Marylebone<span class="footer-ink_address">105 Wigmore Street</span></a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/locations/canary-wharf">Canary Wharf<span class="footer-ink_address">30 South Colonnade</span></a></li>
+            <li class="is-all-item"><a class="footer-ink_link is-all" href="https://www.until.co.uk/locations">All locations <svg class="footer_arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-right"/></svg></a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="ink-clients">
+          <h3 class="footer-ink_heading-small" id="ink-clients">For clients</h3>
+          <ul class="footer-ink_list">
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/health-concierge">Health Concierge</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/health-concierge/personal-trainers">Find a personal trainer</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/health-concierge/physiotherapists">Find a physiotherapist</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/health-concierge/nutritionists">Find a nutritionist</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/health-concierge/aesthetics-clinic">Find an aesthetics specialist</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/stride-blood-panel">Book a blood test</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="ink-resources">
+          <h3 class="footer-ink_heading-small" id="ink-resources">Resources</h3>
+          <ul class="footer-ink_list">
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/journal">Journal</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/state-of-industry">State of the Industry 2026</a></li>
+            <li><a class="footer-ink_link" href="https://www.until.co.uk/careers">Careers</a></li>
+            <li><a class="footer-ink_link" href="mailto:memberships@until.co.uk">Contact us</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div class="footer-ink_bottom">
+        <ul class="footer-ink_legal">
+          <li>© <span class="copyright-date">2026</span> Until. All rights reserved.</li>
+          <li><a class="footer-ink_legal-link" href="https://www.until.co.uk/privacy-policy">Privacy Policy</a></li>
+          <li><a class="footer-ink_legal-link" href="https://www.until.co.uk/terms-and-condition">Terms of Service</a></li>
+          <li><a class="footer-ink_legal-link termly-display-preferences" href="#">Consent Preferences</a></li>
+        </ul>
+        <ul class="footer-ink_social">
+          <li><a class="footer-ink_social-link" href="https://www.instagram.com/until_community/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-instagram"/></svg><span class="sr-only">Instagram</span></a></li>
+          <li><a class="footer-ink_social-link" href="https://www.linkedin.com/company/untilcommunity/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-linkedin"/></svg><span class="sr-only">LinkedIn</span></a></li>
+          <li><a class="footer-ink_social-link" href="https://www.facebook.com/UntilCommunity/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-facebook"/></svg><span class="sr-only">Facebook</span></a></li>
+        </ul>
+      </div>
+
+      <a class="footer-ink_brand" href="https://www.until.co.uk/" aria-label="UNTIL home"><span class="footer_wordmark-wrap"><svg class="footer_wordmark" viewBox="0 0 1384 303" aria-hidden="true"><use href="#until-wordmark"/></svg><span class="footer_wordmark-overlay is-ink" aria-hidden="true"></span></span></a>
+    </div>
+  </div>
+</footer>
+
+<!-- =================================================================== C · BIG TYPE -->
+<footer class="footer-type_component" data-concept="type" hidden>
+  <nav class="footer-type_ticker footer_marquee" aria-label="Rooms by practitioner">
+    <div class="footer_marquee-track">
+      <ul class="footer_marquee-list">
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/gym-space-to-rent">Personal Trainers</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/pilates-room-to-rent">Pilates Instructors</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/physiotherapy-room-to-rent">Physios</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/osteopathy-room-to-rent">Osteopaths</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/chiropractic-room-to-rent">Chiropractors</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/massage-therapists">Massage Therapists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/acupuncturists">Acupuncturists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/podiatrists">Podiatrists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/therapists">Therapists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/counselling">Counsellors</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/psychotherapy-room-to-rent">Psychotherapists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/nutritionist-room-to-rent">Nutritionists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/business-coaches">Coaches</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/medical-room-to-rent">Doctors</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/medical-aesthetics">Aesthetics Practitioners</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/dental-surgery-to-rent">Dentists</a><span class="footer-type_dot" aria-hidden="true"></span></li>
+      </ul>
+      <ul class="footer_marquee-list" aria-hidden="true">
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/gym-space-to-rent" tabindex="-1">Personal Trainers</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/pilates-room-to-rent" tabindex="-1">Pilates Instructors</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/physiotherapy-room-to-rent" tabindex="-1">Physios</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/osteopathy-room-to-rent" tabindex="-1">Osteopaths</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/chiropractic-room-to-rent" tabindex="-1">Chiropractors</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/massage-therapists" tabindex="-1">Massage Therapists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/acupuncturists" tabindex="-1">Acupuncturists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/podiatrists" tabindex="-1">Podiatrists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/therapists" tabindex="-1">Therapists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/counselling" tabindex="-1">Counsellors</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/psychotherapy-room-to-rent" tabindex="-1">Psychotherapists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/nutritionist-room-to-rent" tabindex="-1">Nutritionists</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/business-coaches" tabindex="-1">Coaches</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/medical-room-to-rent" tabindex="-1">Doctors</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word" href="https://www.until.co.uk/medical-aesthetics" tabindex="-1">Aesthetics Practitioners</a><span class="footer-type_dot"></span></li>
+        <li class="footer-type_item"><a class="footer-type_word is-outline" href="https://www.until.co.uk/dental-surgery-to-rent" tabindex="-1">Dentists</a><span class="footer-type_dot"></span></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="padding-global"><div class="container-large">
+    <div class="footer-type_main">
+      <div class="footer-type_contact">
+        <p class="footer-type_eyebrow">Never stop</p>
+        <a class="footer-type_mail" href="mailto:memberships@until.co.uk">memberships@until.co.uk</a>
+        <div class="footer-type_buttons">
+          <a class="footer-type_button" href="https://www.until.co.uk/apply-now">Apply now <svg class="footer_arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-right"/></svg></a>
+          <a class="footer-type_button is-ghost" href="https://www.until.co.uk/memberships">Compare memberships</a>
+        </div>
+      </div>
+      <div class="footer-type_cols">
+        <nav aria-labelledby="type-spaces">
+          <h3 class="footer-type_heading-small" id="type-spaces">Find your space</h3>
+          <ul class="footer-type_list">
+            <li><a class="footer-type_link" href="https://www.until.co.uk/industries/train">Gym floor &amp; Pilates</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/industries/treat">Treatment rooms</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/industries/coach">Therapy &amp; coaching rooms</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/industries/consult/medical">Clinic &amp; aesthetics rooms</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/industries/consult/dental">Dental surgeries</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="type-memberships">
+          <h3 class="footer-type_heading-small" id="type-memberships">Memberships</h3>
+          <ul class="footer-type_list">
+            <li><a class="footer-type_link" href="https://www.until.co.uk/memberships/thrive">Thrive</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/memberships/teams">Teams</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/memberships">Compare memberships</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/members">Why UNTIL</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="type-clients">
+          <h3 class="footer-type_heading-small" id="type-clients">For clients</h3>
+          <ul class="footer-type_list">
+            <li><a class="footer-type_link" href="https://www.until.co.uk/health-concierge">Health Concierge</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/health-concierge/personal-trainers">Find a personal trainer</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/health-concierge/physiotherapists">Find a physiotherapist</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/health-concierge/nutritionists">Find a nutritionist</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/health-concierge/aesthetics-clinic">Find an aesthetics specialist</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/stride-blood-panel">Book a blood test</a></li>
+          </ul>
+        </nav>
+        <nav aria-labelledby="type-resources">
+          <h3 class="footer-type_heading-small" id="type-resources">Resources</h3>
+          <ul class="footer-type_list">
+            <li><a class="footer-type_link" href="https://www.until.co.uk/journal">Journal</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/state-of-industry">State of the Industry 2026</a></li>
+            <li><a class="footer-type_link" href="https://www.until.co.uk/careers">Careers</a></li>
+            <li><a class="footer-type_link" href="mailto:memberships@until.co.uk">Contact us</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <nav class="footer-type_locations" aria-label="Locations">
+      <a class="footer-type_location" href="https://www.until.co.uk/locations/soho"><span><span class="footer-type_location-name">Soho</span><span class="footer-type_location-address">111 Charing Cross Rd</span></span><svg class="footer-type_location-arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-up-right"/></svg></a>
+      <a class="footer-type_location" href="https://www.until.co.uk/locations/liverpool-st"><span><span class="footer-type_location-name">Liverpool St</span><span class="footer-type_location-address">280 Bishopsgate</span></span><svg class="footer-type_location-arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-up-right"/></svg></a>
+      <a class="footer-type_location" href="https://www.until.co.uk/locations/marylebone"><span><span class="footer-type_location-name">Marylebone</span><span class="footer-type_location-address">105 Wigmore Street</span></span><svg class="footer-type_location-arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-up-right"/></svg></a>
+      <a class="footer-type_location" href="https://www.until.co.uk/locations/canary-wharf"><span><span class="footer-type_location-name">Canary Wharf</span><span class="footer-type_location-address">30 South Colonnade</span></span><svg class="footer-type_location-arrow footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-up-right"/></svg></a>
+    </nav>
+
+    <div class="footer-type_bottom">
+      <ul class="footer-type_legal">
+        <li>© <span class="copyright-date">2026</span> Until. All rights reserved.</li>
+        <li><a class="footer-type_legal-link" href="https://www.until.co.uk/privacy-policy">Privacy Policy</a></li>
+        <li><a class="footer-type_legal-link" href="https://www.until.co.uk/terms-and-condition">Terms of Service</a></li>
+        <li><a class="footer-type_legal-link termly-display-preferences" href="#">Consent Preferences</a></li>
+      </ul>
+      <div class="footer-type_right">
+        <ul class="footer-type_social">
+          <li><a class="footer-type_social-link" href="https://www.instagram.com/until_community/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-instagram"/></svg><span class="sr-only">Instagram</span></a></li>
+          <li><a class="footer-type_social-link" href="https://www.linkedin.com/company/untilcommunity/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-linkedin"/></svg><span class="sr-only">LinkedIn</span></a></li>
+          <li><a class="footer-type_social-link" href="https://www.facebook.com/UntilCommunity/" target="_blank" rel="noopener"><svg width="18" height="18" aria-hidden="true"><use href="#icon-facebook"/></svg><span class="sr-only">Facebook</span></a></li>
+        </ul>
+        <button class="footer-type_top" type="button" data-back-to-top>Back to top <svg class="footer-type_top-icon footer_icon" width="24" height="24" aria-hidden="true" focusable="false"><use href="#lucide-arrow-up"/></svg></button>
+      </div>
+    </div>
+
+    <a class="footer-type_brand" href="https://www.until.co.uk/" aria-label="UNTIL home">
+      <span class="footer-type_never" aria-hidden="true"><span>Never</span><span>stop</span></span>
+      <span class="footer_wordmark-wrap"><svg class="footer_wordmark" viewBox="0 0 1384 303" aria-hidden="true"><use href="#until-wordmark"/></svg><span class="footer_wordmark-overlay is-white" aria-hidden="true"></span></span>
+    </a>
+  </div></div>
+</footer>
+
+<script>
+  // Same as the live site footer script: keep the copyright year current
+  document.querySelectorAll('.copyright-date').forEach(function (el) { el.textContent = new Date().getFullYear(); });
+
+  // Back to top (concept C)
+  document.querySelectorAll('[data-back-to-top]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  });
+
+  // Presentation toggle (not part of either footer). Remembers the choice in the URL hash.
+  (function () {
+    var buttons = document.querySelectorAll('[data-show]');
+    function show(name) {
+      document.querySelectorAll('[data-concept]').forEach(function (el) { el.hidden = el.getAttribute('data-concept') !== name; });
+      buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-show') === name)); });
+      if (history.replaceState) history.replaceState(null, '', '#' + (name === 'type' ? 'c' : 'a'));
+    }
+    buttons.forEach(function (b) { b.addEventListener('click', function () { show(b.getAttribute('data-show')); }); });
+    show(location.hash === '#c' ? 'type' : 'ink');
+  })();
+</script>
+</body>
+</html>
